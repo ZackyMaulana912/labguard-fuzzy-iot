@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+.DS_Store
+
+# Catatan untuk Claude, tidak ikut ke GitHub
+CLAUDE.md
