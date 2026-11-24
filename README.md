@@ -4,6 +4,8 @@ Sistem Peringatan Dini Kelembapan dan CO2 Lab Komputer
 
 Sistem membaca kelembapan dan CO2 di lab komputer, menilai kondisi ruangan dengan fuzzy logic (Aman, Waspada, Bahaya), memprediksi kapan ruangan masuk zona bahaya, lalu mengirim peringatan lewat bot Telegram. Sensor di luar ruangan dipakai untuk membandingkan kelembapan, supaya saran yang dikirim tepat (buka pintu atau justru tahan pintu tertutup).
 
+![Diagram blok sistem](drawio/diagram_blok.png)
+
 ## Isi folder
 
 | File | Dibuka di | Fungsi |
@@ -11,7 +13,9 @@ Sistem membaca kelembapan dan CO2 di lab komputer, menilai kondisi ruangan denga
 | `wokwi/sketch.ino` | Wokwi | Kode ESP32 |
 | `wokwi/diagram.json` | Wokwi | Rangkaian komponen |
 | `wokwi/libraries.txt` | Wokwi | Daftar library |
+| `wokwi/compile.sh`, `wokwi/wokwi.toml` | Antigravity / VS Code | Compile dan jalankan simulasi Wokwi dari aplikasi di komputer |
 | `drawio/rancangan_sistem.drawio` | draw.io | Diagram blok dan flowchart (2 halaman) |
+| `drawio/diagram_blok.png` | | Gambar diagram blok (ekspor dari file draw.io) |
 | `python/fuzzy_kelas.py` | Terminal / VS Code | Uji fuzzy, grafik untuk laporan |
 | `python/output/` | | Grafik fungsi keanggotaan, permukaan fuzzy, tabel uji |
 
@@ -48,6 +52,30 @@ Cara demo:
 - DHT22 kanan adalah sensor luar. Ubah kelembapannya untuk melihat saran di pesan bot berubah. Kalau sensor luar gagal dibaca, sistem tetap jalan: LCD menulis "Luar: gagal baca" dan saran ditulis tanpa membandingkan udara luar.
 - Untuk memicu prediksi, naikkan kelembapan pelan-pelan (misalnya 1% tiap beberapa detik) dari 60% ke 70%. LCD baris bawah akan menampilkan "Bahaya ~X mnt".
 - Isi pesan bot selalu muncul di Serial Monitor walau token belum diisi.
+
+## Pilihan lain: jalankan Wokwi di Antigravity atau VS Code
+
+Simulasinya sama dengan wokwi.com, tetapi kode di-compile di komputer sendiri, jadi tidak perlu antre compile seperti di wokwi.com. Simulator Wokwi versi gratis tetap butuh internet. Mode tanpa internet sama sekali hanya untuk lisensi berbayar.
+
+Persiapan (sekali saja, contoh untuk Mac dengan Homebrew):
+
+```bash
+brew install arduino-cli
+arduino-cli core install esp32:esp32 --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+arduino-cli lib install "DHT sensor library for ESPx" "LiquidCrystal I2C"
+```
+
+Paket ESP32 berukuran sekitar 300 MB. Kalau unduhan terputus, jalankan ulang perintah kedua.
+
+Lalu di Antigravity atau VS Code:
+
+1. Pasang extension Wokwi Simulator dari menu Extensions.
+2. Pilih File, Open Folder, lalu buka folder `wokwi` (bukan folder repo), supaya Wokwi langsung menemukan `wokwi.toml`.
+3. Tekan F1, pilih `Wokwi: Request a New License`, klik Open. Di browser klik GET YOUR LICENSE, login ke akun Wokwi, lalu konfirmasi di browser dan di aplikasi. Langkah ini cukup sekali.
+4. Buka Terminal, New Terminal, lalu jalankan `./compile.sh`. Ulangi setiap kali `sketch.ino` diubah.
+5. Tekan F1, pilih `Wokwi: Start Simulator`. Rangkaian muncul di panel samping dan Serial Monitor di panel bawah. Cara demonya sama dengan di atas.
+
+`compile.sh` menyalin `sketch.ino` ke `build/sketch/` sebelum di-compile, karena arduino-cli mewajibkan nama file `.ino` sama dengan nama foldernya. Hasil compile ada di `wokwi/build/` dan tidak ikut ke GitHub.
 
 ## Langkah 2: Sambungkan bot Telegram
 
@@ -108,7 +136,7 @@ Harga perlu dicek di marketplace. Di hardware asli, ganti `WIFI_SSID` dan `WIFI_
 ## Keterbatasan
 
 - Belum diuji di hardware asli. Logika program diuji dengan simulasi di komputer (sensor tiruan) dan di Wokwi.
-- Sensor DHT22 luar awalnya di GPIO4 dan di Wokwi selalu gagal dibaca (TIMEOUT). Sudah dipindah ke GPIO19. Penyebab pastinya belum diketahui.
+- Sensor DHT22 luar awalnya di GPIO4 dan di Wokwi selalu gagal dibaca (TIMEOUT). Setelah dipindah ke GPIO19, sensor terbaca normal di Wokwi. Kenapa GPIO4 gagal belum diketahui.
 - MH-Z19B butuh pemanasan sekitar 3 menit setelah dinyalakan. Selama itu angkanya belum bisa dipercaya, dan program belum menandainya.
 - Pesan Telegram yang gagal terkirim tidak dicoba ulang. Untuk status Bahaya, pengingat 10 menit tetap akan mengirim lagi.
 - Prediksi memakai garis lurus dari data 1 menit terakhir, jadi bisa meleset kalau kenaikan tidak rata (misalnya pintu dibuka sebentar).
