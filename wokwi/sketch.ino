@@ -350,7 +350,8 @@ void tampilLCD(float rh, float ppm, int st, float rhLuar, float suhuLuar, int pr
   char baris1[17], baris2[17];
   // Contoh: "H: 55% C 950 AMN", "H:100% C3000 BHY" (selalu 16 karakter)
   snprintf(baris1, sizeof(baris1), "H:%3.0f%% C%4.0f %s", rh, ppm, SINGKAT[st]);
-  if (prediksi > 0) snprintf(baris2, sizeof(baris2), "Bahaya ~%2d mnt", prediksi);
+  // Prediksi paling lama 30 menit, dibatasi 2 digit supaya baris tetap 16 karakter
+  if (prediksi > 0) snprintf(baris2, sizeof(baris2), "Bahaya ~%2d mnt", prediksi > 99 ? 99 : prediksi);
   else if (isnan(rhLuar)) snprintf(baris2, sizeof(baris2), "Luar: gagal baca");
   else snprintf(baris2, sizeof(baris2), "Luar H:%2.0f%% %2.0fC", rhLuar, suhuLuar);
   lcd.setCursor(0, 0); lcd.print(baris1); for (int i = strlen(baris1); i < 16; i++) lcd.print(' ');
