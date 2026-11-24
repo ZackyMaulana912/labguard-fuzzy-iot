@@ -248,7 +248,10 @@ String urlEncode(const String& s) {
 
 bool kirimTelegram(const String& pesan) {
   Serial.println("----- PESAN BOT -----");
-  Serial.println(pesan);
+  // Pesan bot memakai \n, terminal butuh \r\n supaya tiap baris mulai dari kiri
+  String pesanSerial = pesan;
+  pesanSerial.replace("\n", "\r\n");
+  Serial.println(pesanSerial);
   Serial.println("---------------------");
   if (String(BOT_TOKEN) == "ISI_TOKEN_BOT") {
     Serial.println("[BOT] Token belum diisi, pesan hanya ditampilkan di Serial.");
@@ -266,7 +269,7 @@ bool kirimTelegram(const String& pesan) {
   http.begin(klien, url);
   int kode = http.GET();
   http.end();
-  Serial.printf("[BOT] Kode HTTP: %d\n", kode);
+  Serial.printf("[BOT] Kode HTTP: %d\r\n", kode);
   return kode == 200;
 }
 
@@ -400,7 +403,7 @@ void loop() {
   bool gagalCO2 = ppm < 0;
   if (gagalLuar) {
     // Sensor luar hanya untuk saran, jadi sistem tetap jalan tanpa perbandingan luar
-    Serial.printf("Sensor luar gagal dibaca (%s), saran tanpa perbandingan luar\n",
+    Serial.printf("Sensor luar gagal dibaca (%s), saran tanpa perbandingan luar\r\n",
                   dhtLuar.getStatusString());
   }
   if (gagalDalam || gagalCO2) {
@@ -430,7 +433,7 @@ void loop() {
 
   setLED(st);
   tampilLCD(rh, ppm, st, rhLuar, suhuLuar, prediksi);
-  Serial.printf("RH %.1f%% T %.1fC | Luar %.1f%% %.1fC | CO2 %.0f | fuzzy %.1f %s | laju RH %.2f/mnt CO2 %.1f/mnt | prediksi %d mnt\n",
+  Serial.printf("RH %.1f%% T %.1fC | Luar %.1f%% %.1fC | CO2 %.0f | fuzzy %.1f %s | laju RH %.2f/mnt CO2 %.1f/mnt | prediksi %d mnt\r\n",
                 rh, suhu, rhLuar, suhuLuar, ppm, nilai, NAMA_STATUS[st], lajuRH, lajuCO2, prediksi);
 
   bool masalahRH, masalahCO2;
