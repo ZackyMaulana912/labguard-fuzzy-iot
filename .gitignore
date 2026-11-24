@@ -4,3 +4,7 @@ __pycache__/
 
 # Catatan untuk Claude, tidak ikut ke GitHub
 CLAUDE.md
+wokwi/build/
+
+# Draf laporan, tidak ikut ke GitHub
+laporan/
