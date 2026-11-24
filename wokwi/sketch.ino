@@ -434,7 +434,9 @@ void loop() {
   setLED(st);
   tampilLCD(rh, ppm, st, rhLuar, suhuLuar, prediksi);
   Serial.printf("RH %.1f%% T %.1fC | Luar %.1f%% %.1fC | CO2 %.0f | fuzzy %.1f %s | laju RH %.2f/mnt CO2 %.1f/mnt | prediksi %d mnt\r\n",
-                rh, suhu, rhLuar, suhuLuar, ppm, nilai, NAMA_STATUS[st], lajuRH, lajuCO2, prediksi);
+                rh, suhu, rhLuar, suhuLuar, ppm, nilai, NAMA_STATUS[st],
+                fabsf(lajuRH) < 0.005f ? 0.0f : lajuRH,    // supaya tidak tampil "-0.00"
+                fabsf(lajuCO2) < 0.05f ? 0.0f : lajuCO2, prediksi);
 
   bool masalahRH, masalahCO2;
   cariPenyebab(st, rh, ppm, masalahRH, masalahCO2);
