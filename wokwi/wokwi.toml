@@ -1,0 +1,6 @@
+# Konfigurasi Wokwi untuk VS Code atau Antigravity.
+# Jalankan ./compile.sh dulu supaya file di bawah ini ada.
+[wokwi]
+version = 1
+firmware = 'build/sketch.ino.bin'
+elf = 'build/sketch.ino.elf'
